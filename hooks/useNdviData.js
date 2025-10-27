@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { getMonthYear, generateMonthsBetween } from "@/utils/dateUtils"
 import { fetchNdviTile, fetchNdviSample, fetchRangeSamples, fetchImageCount } from "@/utils/api"
+import { BOUNDARY_FILE } from "@/lib/boundaryConfig"
 
 export default function useNdviData() {
     const maxPast = 72
@@ -50,7 +51,7 @@ export default function useNdviData() {
             setLatestYear(yy)
             setLatestMonth(mm)
             scheduleNdvi(0)
-            fetch("/data/boundary_4326.geojson").then(res => res.json()).then(setBoundary)
+            fetch(`/data/${BOUNDARY_FILE}`).then(res => res.json()).then(setBoundary)
         })
     }, [fetchNdvi])
 
