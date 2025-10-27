@@ -23,7 +23,7 @@ export default function MonthlySlider() {
                 />
                 <button onClick={ndvi.next} disabled={ndvi.offset === ndvi.maxPast}>+</button>
             </div>
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", width: "100vw", overflow: "hidden" }}>
                 <MapView ndvi={ndvi} />
                 <InfoPanel ndvi={ndvi} />
             </div>

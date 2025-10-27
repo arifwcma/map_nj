@@ -1,6 +1,7 @@
 "use client"
 import dynamic from "next/dynamic"
 import React from "react"
+import "leaflet/dist/leaflet.css"
 
 const MapContainer = dynamic(() => import("react-leaflet").then(m => m.MapContainer), { ssr: false })
 const TileLayer = dynamic(() => import("react-leaflet").then(m => m.TileLayer), { ssr: false })

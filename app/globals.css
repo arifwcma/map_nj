@@ -1,3 +1,5 @@
+.leaflet-pane img { max-width: none !important; }
+
 @import "tailwindcss";
 
 :root {
