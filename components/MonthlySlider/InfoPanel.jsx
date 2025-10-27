@@ -32,7 +32,6 @@ export default function InfoPanel({ ndvi }) {
 
     return (
         <div style={{ width: "280px", padding: "10px", borderLeft: "1px solid #ccc" }}>
-            <h4>Info Panel</h4>
             {info ? (
                 <div>
                     <p><b>Month:</b> {info.label}</p>
