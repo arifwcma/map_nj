@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { getMonthYear, generateMonthsBetween } from "@/utils/dateUtils"
 import { fetchNdviTile, fetchNdviSample, fetchRangeSamples, fetchImageCount } from "@/utils/api"
 
@@ -24,13 +24,15 @@ export default function useNdviData() {
     const [secondInfo, setSecondInfo] = useState(null)
     const [latestYear, setLatestYear] = useState(new Date().getFullYear())
     const [latestMonth, setLatestMonth] = useState(new Date().getMonth() + 1)
-
+    const debounceRef = useRef(null)
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
     const yearRange = []
     const thisYear = new Date().getFullYear()
     for (let y = 2019; y <= thisYear; y++) yearRange.push(y)
 
+
     const fetchNdvi = useCallback(async (monthsBack) => {
+
         setLoading(true)
         const { year, month, label } = getMonthYear(latestYear, latestMonth, monthsBack)
         setLabel(label)
@@ -47,13 +49,18 @@ export default function useNdviData() {
         fetchImageCount(y, m).then(({ yy, mm }) => {
             setLatestYear(yy)
             setLatestMonth(mm)
-            fetchNdvi(0)
+            scheduleNdvi(0)
             fetch("/data/boundary_4326.geojson").then(res => res.json()).then(setBoundary)
         })
     }, [fetchNdvi])
 
+    const scheduleNdvi = useCallback((monthsBack) => {
+        if (debounceRef.current) clearTimeout(debounceRef.current)
+        debounceRef.current = setTimeout(() => fetchNdvi(monthsBack), 500)
+    }, [fetchNdvi])
+
     const handleRelease = () => {
-        fetchNdvi(maxPast - offset)
+        scheduleNdvi(maxPast - offset)
         if (secondMarker) fetchRangeSamples(secondMarker.lat, secondMarker.lng, fromYear, fromMonth, toYear, toMonth, true, setSecondSeries, setSecondInfo)
     }
 
@@ -86,13 +93,13 @@ export default function useNdviData() {
     const prev = () => {
         const newVal = Math.max(0, offset - 1)
         setOffset(newVal)
-        fetchNdvi(maxPast - newVal)
+        scheduleNdvi(maxPast - newVal)
     }
 
     const next = () => {
         const newVal = Math.min(maxPast, offset + 1)
         setOffset(newVal)
-        fetchNdvi(maxPast - newVal)
+        scheduleNdvi(maxPast - newVal)
     }
 
     const firstVal = series.data[0] ?? null
@@ -133,6 +140,12 @@ export default function useNdviData() {
         scales: { y: { min: -1, max: 1 } },
         plugins: { legend: { display: true }, title: { display: false } }
     }
+
+    useEffect(() => {
+        return () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current)
+        }
+    }, [])
 
     return {
         maxPast,
