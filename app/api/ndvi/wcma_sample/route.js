@@ -14,7 +14,7 @@ export async function GET(request) {
     if (!year || !month || isNaN(lat) || isNaN(lon))
         return NextResponse.json({ error: "Missing params" }, { status: 400 });
 
-    const boundaryPath = path.join(process.cwd(), "sensitive_resources", "data", "boundary_4326.geojson");
+    const boundaryPath = path.join(process.cwd(), "public", "data", "boundary_4326.geojson");
     const boundary = JSON.parse(fs.readFileSync(boundaryPath, "utf8"));
     const aoi = ee.FeatureCollection(boundary);
     const point = ee.Geometry.Point([lon, lat]);

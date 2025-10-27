@@ -1,0 +1,31 @@
+import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+import { ee, initEarthEngine } from "@/lib/earthengine";
+
+export async function GET(request) {
+    await initEarthEngine();
+    const { searchParams } = new URL(request.url);
+    const year = parseInt(searchParams.get("year"));
+    const month = parseInt(searchParams.get("month"));
+
+    if (!year || !month)
+        return NextResponse.json({ error: "Missing year or month" }, { status: 400 });
+
+    const boundaryPath = path.join(process.cwd(), "public", "data", "boundary_4326.geojson");
+    const boundary = JSON.parse(fs.readFileSync(boundaryPath, "utf8"));
+    const aoi = ee.FeatureCollection(boundary);
+
+    const start = ee.Date.fromYMD(year, month, 1);
+    const end = start.advance(1, "month");
+    const collection = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+        .filterBounds(aoi)
+        .filterDate(start, end);
+
+    return await new Promise((resolve) => {
+        collection.size().getInfo((size) => {
+            console.log(`Images found for WCMA ${year}-${month}:`, size);
+            resolve(NextResponse.json({ year, month, count: size }));
+        });
+    });
+}
