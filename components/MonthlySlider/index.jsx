@@ -8,7 +8,7 @@ export default function MonthlySlider() {
     const ndvi = useNdviData()
     return (
         <div>
-            <h3>NDVI for {ndvi.label}</h3>
+            <h3>NDVI for {ndvi.displayLabel}</h3>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "10px" }}>
                 <button onClick={ndvi.prev} disabled={ndvi.offset === 0}>-</button>
                 <input

@@ -17,6 +17,7 @@ export default function useNdviData() {
     const [toMonth, setToMonth] = useState(null)
     const [toYear, setToYear] = useState(null)
     const [loading, setLoading] = useState(false)
+    const displayLabel = loading ? `${label} is loading ...` : label
     const [compareMode, setCompareMode] = useState(false)
     const [secondMarker, setSecondMarker] = useState(null)
     const [secondSeries, setSecondSeries] = useState({ labels: [], data: [] })
@@ -146,6 +147,7 @@ export default function useNdviData() {
         tileUrl,
         boundary,
         label,
+        displayLabel,
         info,
         loading,
         series,
