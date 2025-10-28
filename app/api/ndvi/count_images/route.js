@@ -19,7 +19,8 @@ export async function GET(request) {
     const aoi = ee.FeatureCollection(boundary);
 
     const start = ee.Date.fromYMD(year, month, 1);
-    const end = start.advance(1, "month");
+    //const end = start.advance(1, "month");
+    const end = (month == 10) ? ee.Date.fromYMD(year, month, 2) : start.advance(1, "month");
     const collection = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
         .filterBounds(aoi)
         .filterDate(start, end);

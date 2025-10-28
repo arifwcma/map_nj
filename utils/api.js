@@ -7,6 +7,7 @@ const base = process.env.NEXT_PUBLIC_BASE_URL
 export async function fetchImageCount(year, month) {
     const res = await fetch(`${base}/ndvi/count_images?year=${year}&month=${month}`)
     const d = await res.json()
+
     if (d.count >= TILE_THRESHOLD) return { yy: year, mm: month }
     const prevMonth = month === 1 ? 12 : month - 1
     const prevYear = month === 1 ? year - 1 : year

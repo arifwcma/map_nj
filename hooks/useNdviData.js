@@ -5,6 +5,18 @@ import { fetchNdviTile, fetchNdviSample, fetchRangeSamples, fetchImageCount } fr
 import { BOUNDARY_FILE } from "@/lib/boundaryConfig"
 
 export default function useNdviData() {
+
+    const isFirstRender = useRef(true);
+    useEffect(() => {
+        if (isFirstRender.current) {
+            console.log('First render');
+            isFirstRender.current = false;
+        } else {
+            console.log('Re-render');
+        }
+    });
+
+
     const maxPast = 72
     const [tileUrl, setTileUrl] = useState(null)
     const [boundary, setBoundary] = useState(null)
